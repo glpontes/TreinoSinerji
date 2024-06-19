@@ -1,0 +1,4 @@
+module appApi {
+	
+	exports app;
+}
