@@ -6,8 +6,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import sinerji.glpontes.entity.Cliente;
+import sinerji.glpontes.entity.Pedido;
 import sinerji.glpontes.repository.Clientes;
+import sinerji.glpontes.repository.Pedidos;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -15,16 +19,27 @@ import java.util.List;
 public class VendasApplication {
 
     @Bean
-    public CommandLineRunner init(@Autowired Clientes clientes){
+    public CommandLineRunner init(
+            @Autowired Clientes clientes,
+            @Autowired Pedidos pedidos
+    ){
         return args -> {
             System.out.println("Salvando clientes");
-            clientes.save(new Cliente("Gabriel"));
-            clientes.save(new Cliente("Felipe"));
+            Cliente felipe = new Cliente("Felipe");
+            clientes.save(felipe);
 
-            List<Cliente> result = clientes.encontrarPorNome("Felipe");
-            result.forEach(System.out::println);
+            Pedido p = new Pedido();
+            p.setCliente(felipe);
+            p.setDataPedido(LocalDate.now());
+            p.setTotal(BigDecimal.valueOf(100));
 
+            pedidos.save(p);
 
+           Cliente cliente = clientes.findClienteFetchPedidos(felipe.getId());
+            System.out.println(cliente);
+            System.out.println(cliente.getPedidos());
+
+             pedidos.findByCliente(felipe).forEach(System.out::println);
         };
     }
 
